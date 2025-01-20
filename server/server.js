@@ -9,8 +9,6 @@ const users = [
   { id: 5, name: "Emily Davis", age: 29, isMarried: false },
 ];
 
-const todos = [];
-
 const typeDefs = `
 type Query {
  getUsers: [User]
@@ -26,9 +24,8 @@ type User {
  name: String
  age: Int
  isMarried: Boolean
-}
+}`;
 
-`;
 const resolvers = {
   Query: {
     getUsers: () => {
@@ -36,15 +33,7 @@ const resolvers = {
     },
     getUserById: (parent, args) => {
       const id = args.id;
-      console.log(
-        "server id",
-        users.find((user) => user.id == id)
-      );
-
       return users.find((user) => user.id == id);
-    },
-    getTodos: () => {
-      return todos;
     },
   },
   Mutation: {
@@ -56,12 +45,7 @@ const resolvers = {
         age,
         isMarried,
       };
-      console.log(newUser, "server");
       users.push(newUser);
-    },
-    createTodo: (parent, args) => {
-      const { todo } = args;
-      todos.push({});
     },
   },
 };

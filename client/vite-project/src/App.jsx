@@ -39,6 +39,7 @@ function App() {
     loading: getUsersLoading,
     data: getUsersData,
     error: getUsersError,
+    refetch,
   } = useQuery(GET_USERS);
 
   const {
@@ -52,17 +53,18 @@ function App() {
   // const { createUser } = useMutation(CREATE_USER);
 
   const [createUser, { loading: createUserLoading, error: createUserError }] =
-    useMutation(CREATE_USER);
+    useMutation(CREATE_USER, {
+      onCompleted: () => {
+        // Refetch users after mutation completes successfully
+        refetch();
+      },
+    });
 
   if (getUsersLoading) return <p>Data Loading....</p>;
 
   if (getUsersError) return <p>Error: {error.message}</p>;
 
-  console.log("getUserByIdData", getUserByIdData);
-  console.log("getUsersData", getUsersData);
-
   const handleCreateUser = async () => {
-    console.log(newUser);
     createUser({
       variables: {
         name: newUser.name,
@@ -70,6 +72,7 @@ function App() {
         isMarried: false,
       },
     });
+    setNewUser({ name: "", age: "" });
   };
 
   return (
@@ -81,10 +84,12 @@ function App() {
           onChange={(e) =>
             setNewUser((prev) => ({ ...prev, name: e.target.value }))
           }
+          value={newUser?.name}
         />
         <input
           type="number"
           placeholder="Age..."
+          value={newUser?.age}
           onChange={(e) =>
             setNewUser((prev) => ({ ...prev, age: e.target.value }))
           }
